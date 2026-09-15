@@ -1,0 +1,21 @@
+watch_folder: "watch_folder"
+processing_dir: "processing"
+output_dir: "output"
+logs_dir: "logs"
+state_db: "state.db"
+
+demucs_model: "htdemucs"
+
+horizontal_resolution: [3840, 2160]
+vertical_resolution: [2160, 3840]
+
+# crop_w se recalcula en runtime como round(vertical_h_source * 9/16),
+# este valor es solo el default si el origen ya es 3840x2160.
+vertical_crop_width: 1215
+
+render_format: "mp4"
+render_codec: "H264"
+audio_codec: "aac"
+
+stable_wait_seconds: 10
+video_extensions: [".mp4", ".mov", ".mkv", ".mxf", ".m4v"]

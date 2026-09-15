@@ -1,0 +1,5 @@
+watchdog>=4.0.0
+demucs>=4.0.1
+mediapipe>=0.10.14
+opencv-python>=4.9.0
+PyYAML>=6.0
