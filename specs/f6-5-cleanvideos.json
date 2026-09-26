@@ -1,0 +1,52 @@
+{
+  "goal_id": "f6-5-cleanvideos",
+  "objective": "THIS IS F6.5: make CleanVideos testable and editable. Mario: 'que sean proyectos funcionales, quiero poder probar metiendo ediciones'.\n\nSTATE VERIFIED 2026-09-25: video_pipeline cleans voice with Demucs and produces a 4K horizontal plus a 9:16 vertical with person tracking (mediapipe), but it has NOT ONE automated test, it only works as a folder watcher (no way to run a single file and see the result), and Demucs/mediapipe take minutes and download hundreds of MB, so any gate that invokes them for real is unusable.\n\nTHE ARCHITECTURAL MOVE THIS FASE REQUIRES: separate ORCHESTRATION from the heavy engines. The engines become injectable; the gate then exercises the entire orchestration with fast fakes.\nLESSON ALREADY PAID (handoff section 6): instant fakes that do not behave like the real thing let three real defects through. These fakes write REAL media with ffmpeg and respect paths and exit codes — keep it that way.\n\nWHAT TO BUILD\n1. video_pipeline/scripts/cli.py --input FILE --output DIR: run ONE file without the watcher.\n2. Injectable engines via CLEANVIDEOS_SEPARATOR and CLEANVIDEOS_CROPPER (or --separator/--cropper) so voice separation and vertical cropping can be swapped WITHOUT editing code.\n3. Both deliverables produced, non-zero duration, and the vertical is genuinely 9:16 (width/height ~= 0.5625).\n4. IDEMPOTENT: repeating a run does not redo finished work.\n5. EDITS: --trim START:END produces a deliverable of exactly that duration (0.5 s tolerance). An invalid trim (end <= start, or past the end of the video) exits non-zero with a clear message and leaves no corrupt file.\n6. If the separator FAILS, never hand over a deliverable that silently lost its audio treatment: either abort non-zero, or record the degradation in the state. A silently muted output is the worst outcome.\n7. Queryable state: state.db or manifest.json records the processed file and the paths produced.\n8. video_pipeline/tests/test_pipeline.py, and the whole suite runs in under 120 s — which is only possible if no test invokes Demucs or mediapipe for real.\n\nSIZE OF ONE ATTEMPT: one capability from the SPINE, written to disk with its test, in one pass. An attempt that changes no file is NO_AUTHORIZED_WORK.\nSPINE: S1 scripts/cli.py single-file run -> S2 injectable separator/cropper -> S3 both deliverables with correct 9:16 geometry -> S4 idempotence + queryable state -> S5 --trim with validation and degradation handling -> S6 tests/test_pipeline.py.\n\nAcceptance: pinned acceptance/evaluate_f6_5_cleanvideos.py returns 1 (10 checks). Today RED 0/10.",
+  "task_type": "CODE",
+  "outcome_predicate": {
+    "metric": "f6_5_cleanvideos",
+    "op": ">=",
+    "value": 1,
+    "progress_direction": "up",
+    "evaluator": {
+      "command": [
+        "python3",
+        "acceptance/evaluate_f6_5_cleanvideos.py"
+      ],
+      "pinned": [
+        "acceptance/evaluate_f6_5_cleanvideos.py"
+      ],
+      "timeout_seconds": 2700
+    }
+  },
+  "authority_envelope": {
+    "allow": [
+      "video_pipeline/scripts",
+      "video_pipeline/tests",
+      "video_pipeline/config.yaml",
+      "video_pipeline/README.md",
+      "docs"
+    ],
+    "deny": [
+      "acceptance",
+      "video_pipeline/.venv",
+      "video_pipeline/models",
+      "video_pipeline/output",
+      "video_pipeline/watch_folder"
+    ],
+    "executors": [
+      "supervisor"
+    ],
+    "producer_commands": [],
+    "task_types": [
+      "CODE"
+    ]
+  },
+  "budget": {
+    "max_attempts": 14,
+    "stall_attempts": 4,
+    "replan_attempts": 4
+  },
+  "planner": {
+    "mode": "agent"
+  }
+}

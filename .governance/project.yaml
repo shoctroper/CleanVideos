@@ -1,0 +1,27 @@
+schema_version: '1'
+project: cleanvideos
+governance_version: 1.0.0
+task_type: CODE
+policy_version: 1
+objective: 'CleanVideos: pipeline de limpieza de audio y entregables horizontal/vertical,
+  probable sin GPU y editable por Mario'
+scope:
+  allow:
+  - video_pipeline/scripts
+  - video_pipeline/tests
+  - video_pipeline/config.yaml
+  - video_pipeline/README.md
+  - specs
+  - docs
+  deny:
+  - acceptance
+  - video_pipeline/.venv
+  - video_pipeline/models
+  ignore: []
+acceptance:
+  tests:
+    command: python3 -m pytest -q video_pipeline/tests -p no:cacheprovider
+    timeout: 600.0
+    junit: false
+  artifacts: []
+providers: {}

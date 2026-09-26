@@ -1,13 +1,18 @@
-# Entornos y cachés
-.venv/
 __pycache__/
-*.pyc
+!.governance/project.yaml
 .DS_Store
+.governance/*
+.venv/
+*.pyc
+**/__pycache__/
+# Entornos y cachés
 # Estado de ejecución y datos del pipeline (nunca se versionan)
-video_pipeline/state.db
-video_pipeline/logs/
-video_pipeline/processing/
-video_pipeline/output/
-video_pipeline/watch_folder/
 # Modelos descargables (ver README §2)
+video_pipeline/__pycache__/
+video_pipeline/.venv/
+video_pipeline/logs/
 video_pipeline/models/
+video_pipeline/output/
+video_pipeline/processing/
+video_pipeline/state.db
+video_pipeline/watch_folder/
