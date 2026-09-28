@@ -1,3 +1,6 @@
+from __future__ import annotations
+
+from pathlib import Path
 import sqlite3
 from contextlib import contextmanager
 
@@ -5,6 +8,7 @@ from contextlib import contextmanager
 class Database:
     def __init__(self, db_path: str):
         self.db_path = db_path
+        Path(self.db_path).parent.mkdir(parents=True, exist_ok=True)
         self._init_db()
 
     @contextmanager

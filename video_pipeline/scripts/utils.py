@@ -58,3 +58,18 @@ def get_video_resolution_fps(path: str) -> tuple[int, int, float]:
             fps = float(num) / float(den) if float(den) != 0 else 30.0
             return width, height, fps
     raise RuntimeError(f"No se encontró stream de video en {path}")
+
+
+def get_video_duration(path: str) -> float:
+    cmd = [
+        "ffprobe", "-v", "error",
+        "-show_entries", "format=duration",
+        "-of", "default=nw=1:nk=1",
+        str(path),
+    ]
+    result = subprocess.run(cmd, check=True, capture_output=True, text=True)
+    out = (result.stdout or "").strip()
+    if not out:
+        raise RuntimeError(f"No se pudo obtener la duración de {path}")
+    return float(out)
+

@@ -1,9 +1,17 @@
+from __future__ import annotations
+
 import threading
 from pathlib import Path
 from typing import Callable
 
-from watchdog.events import FileSystemEventHandler
-from watchdog.observers import Observer
+try:
+    from watchdog.events import FileSystemEventHandler
+    from watchdog.observers import Observer
+except ImportError:
+    class FileSystemEventHandler:  # type: ignore[no-redef]
+        pass
+
+    Observer = None
 
 from utils import is_video_file
 

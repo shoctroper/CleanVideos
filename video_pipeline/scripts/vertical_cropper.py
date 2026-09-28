@@ -1,10 +1,20 @@
+from __future__ import annotations
+
 import subprocess
 from pathlib import Path
 
-import cv2
-import mediapipe as mp
-from mediapipe.tasks.python import BaseOptions
-from mediapipe.tasks.python import vision as mp_vision
+try:
+    import cv2
+    import mediapipe as mp
+    from mediapipe.tasks.python import BaseOptions
+    from mediapipe.tasks.python import vision as mp_vision
+except ImportError:
+    cv2 = None
+    mp = None
+    BaseOptions = None
+    mp_vision = None
+
+from utils import has_audio_stream
 
 MODELS_DIR = Path(__file__).resolve().parent.parent / "models"
 POSE_MODEL_PATH = MODELS_DIR / "pose_landmarker_lite.task"
@@ -132,6 +142,8 @@ def crop_vertical(
 
     if clean_audio_path:
         cmd += ["-map", "1:a", "-c:a", "aac", "-b:a", "192k"]
+    elif has_audio_stream(video_path):
+        cmd += ["-map", "0:a:0", "-c:a", "aac", "-b:a", "192k"]
     else:
         cmd += ["-an"]
 
